@@ -41,7 +41,12 @@ define Build/Compile
 	$(info PKG_BUILD_DIR=$(PKG_BUILD_DIR))
 	$(info CARGO_PKG_VARS=$(CARGO_PKG_VARS))
 
-	cd $(PKG_BUILD_DIR) && $(CARGO_PKG_VARS) BYPASS_LLT_SECRETS=1 cargo build -p teliod --release --target $(RUSTC_TARGET_ARCH)
+	cd $(PKG_BUILD_DIR) && \
+	CC_$(subst -,_,$(RUSTC_TARGET_ARCH))="$(TARGET_CC)" \
+	CXX_$(subst -,_,$(RUSTC_TARGET_ARCH))="$(TARGET_CXX)" \
+	AR_$(subst -,_,$(RUSTC_TARGET_ARCH))="$(TARGET_AR)" \
+	$(CARGO_PKG_VARS) \
+	BYPASS_LLT_SECRETS=1 cargo build -p teliod --release --target $(RUSTC_TARGET_ARCH)
 	
 	$(CURDIR)/../$(PKG_NAME)/version_placeholder_fix.py "$(BINFILE)" "$(PKG_VERSION)+openwrt"
 endef
