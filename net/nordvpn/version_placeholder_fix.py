@@ -5,9 +5,9 @@ import re
 if len(sys.argv) != 3:
     sys.exit(f"Usage: {sys.argv[0]} <file> <version>")
 
-teliod_path, version = sys.argv[1], sys.argv[2]
+nordvpnlite_path, version = sys.argv[1], sys.argv[2]
 
-with open(teliod_path, "rb") as f:
+with open(nordvpnlite_path, "rb") as f:
     data = f.read()
 
 m = re.search(br"VERSION_PLACEHOLDER@+\x00", data)
@@ -18,7 +18,7 @@ start, end = m.span()
 field_len = end - start
 max_len = field_len - 1  # subtract the final NUL
 
-print(f"Replacing version placeholder in {teliod_path} with '{version}'")
+print(f"Replacing version placeholder in {nordvpnlite_path} with '{version}'")
 print(f"Field length: {field_len} bytes, max_length: {max_len} bytes")
 
 if len(version) > max_len:
@@ -30,5 +30,5 @@ repl = repl.ljust(field_len, b"\x00")
 
 newdata = data[:start] + repl + data[end:]
 
-with open(teliod_path, "wb") as f:
+with open(nordvpnlite_path, "wb") as f:
     f.write(newdata)

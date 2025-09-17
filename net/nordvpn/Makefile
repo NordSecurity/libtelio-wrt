@@ -21,7 +21,7 @@ PKG_BUILD_DEPENDS:=rust/host
 include $(INCLUDE_DIR)/package.mk
 include ../../../packages/lang/rust/rust-package.mk
 
-# +kmod-tun is required, however teliod has NepTUN built-in so +kmod-wireguard could, potentially, be optional
+# +kmod-tun is required, however NordVPN Lite has NepTUN built-in so +kmod-wireguard could, potentially, be optional
 define Package/nordvpn
 	SECTION:=net
 	CATEGORY:=Network
@@ -34,21 +34,21 @@ define Package/nordvpn/description
 	NordVPN is the gateway to a secure and private access to the internet.
 endef
 
-BINFILE := $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/release/teliod
+BINFILE := $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/release/nordvpnlite
 
 define Build/Compile
-	$(info RUSTC_TARGET_ARCH=$(RUSTC_TARGET_ARCH))	
+	$(info RUSTC_TARGET_ARCH=$(RUSTC_TARGET_ARCH))
 	$(info PKG_BUILD_DIR=$(PKG_BUILD_DIR))
 	$(info CARGO_PKG_VARS=$(CARGO_PKG_VARS))
 
-	cd $(PKG_BUILD_DIR) && $(CARGO_PKG_VARS) BYPASS_LLT_SECRETS=1 cargo build -p teliod --release --target $(RUSTC_TARGET_ARCH)
-	
+	cd $(PKG_BUILD_DIR) && $(CARGO_PKG_VARS) BYPASS_LLT_SECRETS=1 cargo build -p nordvpnlite --release --target $(RUSTC_TARGET_ARCH)
+
 	$(CURDIR)/../$(PKG_NAME)/version_placeholder_fix.py "$(BINFILE)" "$(PKG_VERSION)+openwrt"
 endef
 
 define Package/nordvpn/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/release/teliod $(1)/usr/sbin/nordvpn
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(RUSTC_TARGET_ARCH)/release/nordvpnlite $(1)/usr/sbin/nordvpn
 
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/nordvpn.init $(1)/etc/init.d/nordvpn
